@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Cocktail Recipes',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+        brightness: Brightness.dark,
         useMaterial3: true,
       ),
       home: const MainNavigation(),
