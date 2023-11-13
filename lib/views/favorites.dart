@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projetprogmobile/views/cocktailitem.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
@@ -11,8 +12,12 @@ class _FavoritePageState extends State<FavoritePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AppBar(
-        title: const Text('Favorites Page'),
+      body: GridView.count(crossAxisCount: 2,
+        children: List.generate(100, (index) {
+          return Center(
+            child: CocktailItem(title: 'Cocktail $index'),
+          );
+        }),
       ),
     );
   }
