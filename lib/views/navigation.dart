@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projetprogmobile/views/home.dart';
+import 'package:projetprogmobile/views/favorites.dart';
+import 'package:projetprogmobile/views/search.dart';
 
 
 class MainNavigation extends StatefulWidget {
@@ -30,13 +32,14 @@ class _MainNavigationState extends State<MainNavigation> {
             label: 'Home',
           ),
           NavigationDestination(
-            icon: Icon(Icons.business),
-            label: 'Business',
+            selectedIcon: Icon(Icons.favorite),
+            icon: Icon(Icons.favorite_outline),
+            label: 'Favorites',
           ),
           NavigationDestination(
-            selectedIcon: Icon(Icons.school),
-            icon: Icon(Icons.school_outlined),
-            label: 'School',
+            selectedIcon: Icon(Icons.search),
+            icon: Icon(Icons.search_outlined),
+            label: 'Search',
           ),
         ],
       ),
@@ -49,12 +52,12 @@ class _MainNavigationState extends State<MainNavigation> {
         Container(
           color: Colors.green,
           alignment: Alignment.center,
-          child: const Text('Page 2'),
+          child: const FavoritePage(),
         ),
         Container(
           color: Colors.blue,
           alignment: Alignment.center,
-          child: const Text('Page 3'),
+          child: const SearchPage(),
         ),
       ][currentPageIndex],
     );
