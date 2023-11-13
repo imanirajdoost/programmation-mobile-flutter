@@ -13,9 +13,9 @@ class _FavoritePageState extends State<FavoritePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GridView.count(crossAxisCount: 2,
-        children: List.generate(100, (index) {
+        children: List.generate(20, (index) {
           return Center(
-            child: CocktailItem(title: 'Cocktail $index'),
+            child: CocktailItem(title: 'Cocktail $index', imageUrl: 'https://www.thecocktaildb.com/images/media/drink/nkwr4c1606770558.jpg'),
           );
         }),
       ),
