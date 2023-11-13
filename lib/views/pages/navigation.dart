@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:projetprogmobile/views/home.dart';
-import 'package:projetprogmobile/views/favorites.dart';
-import 'package:projetprogmobile/views/search.dart';
+import 'package:projetprogmobile/views/pages/home.dart';
+import 'package:projetprogmobile/views/pages/favorites.dart';
+import 'package:projetprogmobile/views/pages/search.dart';
 
 
 class MainNavigation extends StatefulWidget {

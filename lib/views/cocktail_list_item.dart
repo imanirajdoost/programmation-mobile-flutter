@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:projetprogmobile/views/pages/cocktail.dart';
 
-class CocktailItem extends StatefulWidget {
+class CocktailListItem extends StatefulWidget {
   final String title;
   final String imageUrl; // URL of the cocktail image
   final bool isLiked; // Indicates if the cocktail is liked
 
-  const CocktailItem({super.key, required this.title, required this.imageUrl, this.isLiked = false});
+  const CocktailListItem({super.key, required this.title, required this.imageUrl, this.isLiked = false});
 
   @override
-  State<CocktailItem> createState() => _CocktailItemState();
+  State<CocktailListItem> createState() => _CocktailListItemState();
 }
 
-class _CocktailItemState extends State<CocktailItem> {
+class _CocktailListItemState extends State<CocktailListItem> {
   late String name;
   late String imageUrl; // URL of the cocktail image
   late bool isLiked = false; // Indicates if the cocktail is liked
@@ -28,8 +29,12 @@ class _CocktailItemState extends State<CocktailItem> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Define the action when the card is tapped
-        print("${widget.title} tapped!");
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CocktailPage(cocktailName: widget.title),
+          ),
+        );
       },
       child: Card(
         child: Column(
@@ -42,10 +47,10 @@ class _CocktailItemState extends State<CocktailItem> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text(
                 widget.title,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
             IconButton(

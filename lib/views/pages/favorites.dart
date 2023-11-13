@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projetprogmobile/views/cocktailitem.dart';
+import 'package:projetprogmobile/views/cocktail_list_item.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
@@ -15,7 +15,7 @@ class _FavoritePageState extends State<FavoritePage> {
       body: GridView.count(crossAxisCount: 2,
         children: List.generate(20, (index) {
           return Center(
-            child: CocktailItem(title: 'Cocktail $index', imageUrl: 'https://www.thecocktaildb.com/images/media/drink/nkwr4c1606770558.jpg'),
+            child: CocktailListItem(title: 'Cocktail $index', imageUrl: 'https://www.thecocktaildb.com/images/media/drink/nkwr4c1606770558.jpg'),
           );
         }),
       ),
