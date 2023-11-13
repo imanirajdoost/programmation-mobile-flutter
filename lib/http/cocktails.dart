@@ -4,8 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:projetprogmobile/models/cocktails.dart';
 
 Future<List<Cocktail>> fetchCocktails() async {
-  final response = await http
-      .get(Uri.parse('https://www.thecocktaildb.com/api/json/v1/1/random.php'));
+  final response = await http.get(Uri.parse('https://www.thecocktaildb.com/api/json/v1/1/search.php?s='));
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
@@ -13,7 +12,8 @@ Future<List<Cocktail>> fetchCocktails() async {
     var drinks = jsonDecode(response.body)['drinks'];
     List<Cocktail> cocktails = [];
 
-    drinks.forEach((drink) => cocktails.add(Cocktail.fromJson(jsonDecode(drink) as Map<String, dynamic>)));
+    print(drinks);
+    drinks.forEach((drink) => cocktails.add(Cocktail.fromJson(drink)));
 
     return cocktails;
   } else {

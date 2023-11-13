@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
             future: futureCocktails,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Text(snapshot.data![0].name);
+                return Text(snapshot.data!.map((elem) => elem.name).join(", "));
               } else if (snapshot.hasError) {
                 return Text('${snapshot.error}');
               }
