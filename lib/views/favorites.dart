@@ -10,6 +10,10 @@ class FavoritePage extends StatefulWidget {
 class _FavoritePageState extends State<FavoritePage> {
   @override
   Widget build(BuildContext context) {
-    return const Text('This is the favorite page');
+    return Scaffold(
+      body: AppBar(
+        title: const Text('Favorites Page'),
+      ),
+    );
   }
 }

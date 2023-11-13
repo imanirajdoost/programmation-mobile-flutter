@@ -44,21 +44,9 @@ class _MainNavigationState extends State<MainNavigation> {
         ],
       ),
       body: <Widget>[
-        Container(
-          color: Colors.red,
-          alignment: Alignment.center,
-          child: const HomePage(),
-        ),
-        Container(
-          color: Colors.green,
-          alignment: Alignment.center,
-          child: const FavoritePage(),
-        ),
-        Container(
-          color: Colors.blue,
-          alignment: Alignment.center,
-          child: const SearchPage(),
-        ),
+        const HomePage(),
+        const FavoritePage(),
+        const SearchPage(),
       ][currentPageIndex],
     );
   }
