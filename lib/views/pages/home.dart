@@ -15,12 +15,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Fetch Data Example',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: const Text('Fetch Cocktails'),
         ),
@@ -43,8 +38,7 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ),
-      ),
-    );
+      );
   }
 
   @override
