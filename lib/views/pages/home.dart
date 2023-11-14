@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projetprogmobile/http/cocktails.dart';
 import 'package:projetprogmobile/models/cocktails.dart';
+import 'package:projetprogmobile/views/cocktail_list_item.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -28,7 +29,11 @@ class _HomePageState extends State<HomePage> {
             future: futureCocktails,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Text(snapshot.data!.map((elem) => elem.name).join(", "));
+                return GridView.count(crossAxisCount: 2,
+                  children: snapshot.data!.map((e) => Center(
+                    child: CocktailListItem(cocktail: e),
+                  ),
+                ).toList());
               } else if (snapshot.hasError) {
                 return Text('${snapshot.error}');
               }

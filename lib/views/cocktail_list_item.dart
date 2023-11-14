@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:projetprogmobile/models/cocktails.dart';
 import 'package:projetprogmobile/views/pages/cocktail.dart';
 
 class CocktailListItem extends StatefulWidget {
-  final String title;
-  final String imageUrl; // URL of the cocktail image
+  final Cocktail cocktail;
   final bool isLiked; // Indicates if the cocktail is liked
 
-  const CocktailListItem({super.key, required this.title, required this.imageUrl, this.isLiked = false});
+  const CocktailListItem({super.key, required this.cocktail, this.isLiked = false});
 
   @override
   State<CocktailListItem> createState() => _CocktailListItemState();
 }
 
 class _CocktailListItemState extends State<CocktailListItem> {
-  late String name;
-  late String imageUrl; // URL of the cocktail image
+  late Cocktail cocktail;
   late bool isLiked = false; // Indicates if the cocktail is liked
 
   @override
   void initState() {
     super.initState();
-    name = widget.title; // Initialize name here
-    imageUrl = widget.imageUrl; // Initialize imageUrl here
+    cocktail = widget.cocktail; // Initialize name here
     isLiked = widget.isLiked; // Initialize isLiked here
   }
 
@@ -32,7 +30,7 @@ class _CocktailListItemState extends State<CocktailListItem> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CocktailPage(cocktailName: widget.title),
+            builder: (context) => CocktailPage(cocktail: widget.cocktail),
           ),
         );
       },
@@ -42,14 +40,14 @@ class _CocktailListItemState extends State<CocktailListItem> {
           children: <Widget>[
             Expanded(
               child: Image.network(
-                widget.imageUrl,
+                widget.cocktail.thumbnailURL,
                 fit: BoxFit.cover, // Cover the card area
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                widget.title,
+                widget.cocktail.name,
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
