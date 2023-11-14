@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projetprogmobile/views/search_dropdown_item.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -16,7 +17,7 @@ class _SearchPageState extends State<SearchPage> {
     final searchField = TextField(
       decoration: InputDecoration(
         hintText: 'Search',
-        prefixIcon: Icon(Icons.search),
+        prefixIcon: const Icon(Icons.search),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -33,14 +34,20 @@ class _SearchPageState extends State<SearchPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search'),
+        title: const Text('Filter Cocktails'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
             searchFieldAndButton,
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
+            const Row(
+              children: [
+                Expanded(child: DropdownButtonSearchFilter()
+                )
+              ]
+            )
           ],
         ),
       ),
