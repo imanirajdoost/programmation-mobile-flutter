@@ -8,63 +8,40 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  bool isDark = false;
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = ThemeData(
-        useMaterial3: true,
-        brightness: isDark ? Brightness.dark : Brightness.light);
 
-    return MaterialApp(
-      theme: themeData,
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Search Bar Sample')),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SearchAnchor(
-              builder: (BuildContext context, SearchController controller) {
-                return SearchBar(
-                  controller: controller,
-                  padding: const MaterialStatePropertyAll<EdgeInsets>(
-                      EdgeInsets.symmetric(horizontal: 16.0)),
-                  onTap: () {
-                    controller.openView();
-                  },
-                  onChanged: (_) {
-                    controller.openView();
-                  },
-                  leading: const Icon(Icons.search),
-                  trailing: <Widget>[
-                    Tooltip(
-                      message: 'Change brightness mode',
-                      child: IconButton(
-                        isSelected: isDark,
-                        onPressed: () {
-                          setState(() {
-                            isDark = !isDark;
-                          });
-                        },
-                        icon: const Icon(Icons.wb_sunny_outlined),
-                        selectedIcon: const Icon(Icons.brightness_2_outlined),
-                      ),
-                    )
-                  ],
-                );
-              }, suggestionsBuilder:
-              (BuildContext context, SearchController controller) {
-            return List<ListTile>.generate(5, (int index) {
-              final String item = 'item $index';
-              return ListTile(
-                title: Text(item),
-                onTap: () {
-                  setState(() {
-                    controller.closeView(item);
-                  });
-                },
-              );
-            });
-          }),
+    // Text field with search icon
+    final searchField = TextField(
+      decoration: InputDecoration(
+        hintText: 'Search',
+        prefixIcon: Icon(Icons.search),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
+
+
+    // Search field and button
+    final searchFieldAndButton = Row(
+      children: [
+        Expanded(child: searchField),
+      ],
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Search'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            searchFieldAndButton,
+            SizedBox(height: 10),
+          ],
         ),
       ),
     );
