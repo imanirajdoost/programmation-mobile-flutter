@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projetprogmobile/db/db.dart';
 import 'package:projetprogmobile/models/cocktails.dart';
 import 'package:projetprogmobile/views/pages/cocktail.dart';
 
@@ -21,6 +22,9 @@ class _CocktailListItemState extends State<CocktailListItem> {
     super.initState();
     cocktail = widget.cocktail; // Initialize name here
     isLiked = widget.isLiked; // Initialize isLiked here
+
+    bool inFav = db.collection('favorites').doc(cocktail.id) == null;
+    isLiked = inFav;
   }
 
   @override
@@ -59,6 +63,14 @@ class _CocktailListItemState extends State<CocktailListItem> {
               onPressed: () {
                 setState(() {
                   isLiked = !isLiked; // Toggle the liked status
+                  if (isLiked) {
+                    db.collection('favorites').doc(cocktail.id).set({
+                      'id': cocktail.id,
+                      'added_at': DateTime.now()
+                    });
+                  } else {
+                    db.collection('favorites').doc(cocktail.id).delete();
+                  }
                 });
               },
             ),
