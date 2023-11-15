@@ -9,10 +9,8 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-
   @override
   Widget build(BuildContext context) {
-
     // Text field with search icon
     final searchField = TextField(
       decoration: InputDecoration(
@@ -23,7 +21,6 @@ class _SearchPageState extends State<SearchPage> {
         ),
       ),
     );
-
 
     // Search field and button
     final searchFieldAndButton = Row(
@@ -42,11 +39,25 @@ class _SearchPageState extends State<SearchPage> {
           children: [
             searchFieldAndButton,
             const SizedBox(height: 10),
-            const Row(
-              children: [
-                Expanded(child: DropdownButtonSearchFilter()
-                )
-              ]
+            const Row(children: [
+              Expanded(child: DropdownButtonSearchFilter()),
+              SizedBox(width: 50),
+              Expanded(child: DropdownButtonSearchFilter()),
+            ]),
+            const SizedBox(height: 10),
+            Expanded(
+              child: Center(
+                  child: GridView.count(
+                      crossAxisCount: 2,
+                      children: List.generate(
+                          100,
+                          (index) => Center(
+                                child: Text(
+                                  'Item $index',
+                                  style:
+                                      Theme.of(context).textTheme.headlineSmall,
+                                ),
+                              )))),
             )
           ],
         ),
