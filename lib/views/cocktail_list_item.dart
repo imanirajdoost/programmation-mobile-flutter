@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projetprogmobile/db/db.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:projetprogmobile/models/cocktails.dart';
 import 'package:projetprogmobile/views/pages/cocktail.dart';
 
@@ -23,8 +23,15 @@ class _CocktailListItemState extends State<CocktailListItem> {
     cocktail = widget.cocktail; // Initialize name here
     isLiked = widget.isLiked; // Initialize isLiked here
 
-    bool inFav = db.collection('favorites').doc(cocktail.id) == null;
-    isLiked = inFav;
+    setIsLiked();
+  }
+
+  Future<void> setIsLiked() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isLiked = prefs.getString(cocktail.id) != null;
+      print(isLiked);
+    });
   }
 
   @override
@@ -64,12 +71,15 @@ class _CocktailListItemState extends State<CocktailListItem> {
                 setState(() {
                   isLiked = !isLiked; // Toggle the liked status
                   if (isLiked) {
-                    db.collection('favorites').doc(cocktail.id).set({
-                      'id': cocktail.id,
-                      'added_at': DateTime.now()
+                    final prefs = SharedPreferences.getInstance();
+                    prefs.then((p) => {
+                      p.setString(cocktail.id, DateTime.now().toIso8601String())
                     });
                   } else {
-                    db.collection('favorites').doc(cocktail.id).delete();
+                    final prefs = SharedPreferences.getInstance();
+                    prefs.then((p) => {
+                      p.remove(cocktail.id)
+                    });
                   }
                 });
               },

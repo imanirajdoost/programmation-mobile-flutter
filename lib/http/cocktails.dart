@@ -12,7 +12,7 @@ Future<List<Cocktail>> fetchCocktails() async {
     var drinks = jsonDecode(response.body)['drinks'];
     List<Cocktail> cocktails = [];
 
-    drinks.forEach((drink) => cocktails.add(Cocktail.fromJson(drink)));
+    drinks.forEach((drink) => cocktails.add(Cocktail.fromOriginalJson(drink)));
 
     return cocktails;
   } else {

@@ -1,3 +1,4 @@
+
 class Cocktail {
   final String id;
   final String name;
@@ -25,7 +26,7 @@ class Cocktail {
     required this.measures
   });
 
-  factory Cocktail.fromJson(Map<String, dynamic> json) {
+  factory Cocktail.fromOriginalJson(Map<String, dynamic> json) {
     return Cocktail(
       id: json['idDrink'] as String,
       name: json['strDrink'] as String,
@@ -72,4 +73,37 @@ class Cocktail {
       ].where((element) => element != "")).map((element) => element as String).toList(),
     );
   }
+
+  Map<String, dynamic> toJSON() {
+    return {
+      'id': id,
+      'name': name,
+      'tags': tags,
+      'category': category,
+      'IBA': IBA,
+      'alcoholic': alcoholic,
+      'glass': glass,
+      'instructions': instructions,
+      'thumbnailURL': thumbnailURL,
+      'ingredients': ingredients,
+      'measures': measures
+    };
+  }
+
+  factory Cocktail.fromJSON(Map<String, dynamic> json) {
+    return Cocktail(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      tags: json['tags'].cast<String>(),
+      category: json['category'] as String,
+      IBA: json['IBA'] as String?,
+      alcoholic: json['alcoholic'] as String,
+      glass: json['glass'] as String,
+      instructions: json['instructions'] as String,
+      thumbnailURL: json['thumbnailURL'] as String,
+      ingredients: json['ingredients'].cast<String>(),
+      measures: json['measures'].cast<String>(),
+    );
+  }
+
 }
