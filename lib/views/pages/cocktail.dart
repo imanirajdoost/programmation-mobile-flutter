@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projetprogmobile/models/cocktails.dart';
+import 'package:share/share.dart';
 
 class CocktailPage extends StatefulWidget {
   final Cocktail cocktail;
@@ -19,6 +20,20 @@ class _CocktailPageState extends State<CocktailPage> {
       listLength = widget.cocktail.measures.length;
     }
 
+    // Function to create the shareable text content
+    String createShareContent() {
+      String ingredientsText = widget.cocktail.ingredients
+          .asMap()
+          .entries
+          .map((entry) => "${entry.value} - ${widget.cocktail.measures.length >
+          entry.key ? widget.cocktail.measures[entry.key] : 'N/A'}")
+          .join('\n');
+
+      return "${widget.cocktail
+          .name}\n\nIngredients:\n$ingredientsText\n\nInstructions:\n${widget
+          .cocktail.instructions}";
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.cocktail.name),
@@ -36,7 +51,7 @@ class _CocktailPageState extends State<CocktailPage> {
                 children: <Widget>[
                   // Display the cocktail name if available
                   Text(
-                    widget.cocktail.name ?? 'Unknown Cocktail',
+                    widget.cocktail.name,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 10),
@@ -61,6 +76,13 @@ class _CocktailPageState extends State<CocktailPage> {
           ],
         ),
       ),
+    // Floating action button for sharing
+    floatingActionButton: FloatingActionButton(
+    child: const Icon(Icons.share),
+    onPressed: () {
+    Share.share(createShareContent());
+    },
+    ),
     );
   }
 }
