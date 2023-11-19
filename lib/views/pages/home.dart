@@ -1,8 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:projetprogmobile/models/cocktails.dart';
 import 'package:projetprogmobile/storage/cocktails.dart';
 import 'package:projetprogmobile/views/cocktail_list_item.dart';
+import 'package:projetprogmobile/views/cocktail_of_the_day_item.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,37 +14,94 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late Future<List<Cocktail>> futureCocktails;
 
+  late Future<Cocktail> cocktailOfTheDay;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Cocktails'),
-        ),
-        body: Center(
-          child: FutureBuilder<List<Cocktail>>(
+      appBar: AppBar(
+        title: const Text('Home'),
+      ),
+      body: FutureBuilder<Cocktail>(
+        future: cocktailOfTheDay,
+        builder: (context, cocktailSnapshot) {
+          return FutureBuilder<List<Cocktail>>(
             future: futureCocktails,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return GridView.count(crossAxisCount: 2,
-                  children: snapshot.data!.map((e) => Center(
-                    child: CocktailListItem(cocktail: e),
-                  ),
-                ).toList());
-              } else if (snapshot.hasError) {
-                return Text('${snapshot.error}');
+            builder: (context, gridSnapshot) {
+              if (cocktailSnapshot.connectionState == ConnectionState.waiting ||
+                  gridSnapshot.connectionState == ConnectionState.waiting) {
+                // Show loading spinner if either future is still loading
+                return const CircularProgressIndicator();
+              } else if (cocktailSnapshot.hasError) {
+                // Handle errors for cocktail of the day
+                return Text('Error: ${cocktailSnapshot.error}');
+              } else if (gridSnapshot.hasError) {
+                // Handle errors for grid cocktails
+                return Text('Error: ${gridSnapshot.error}');
               }
 
-              // By default, show a loading spinner.
-              return const CircularProgressIndicator();
+              return CustomScrollView(
+                slivers: <Widget>[
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            "Cocktail of the Day",
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 150,
+                          child: Center(
+                            child: cocktailSnapshot.hasData
+                                ? CocktailOfTheDayItem(
+                                    cocktail: cocktailSnapshot.data!)
+                                : const Text('No Cocktail of the Day'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        "All Cocktails",
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                  ),
+                  SliverGrid(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                        return Center(
+                          child: CocktailListItem(
+                              cocktail: gridSnapshot.data![index]),
+                        );
+                      },
+                      childCount: gridSnapshot.data!.length,
+                    ),
+                  ),
+                ],
+              );
             },
-          ),
-        ),
-      );
+          );
+        },
+      ),
+    );
   }
 
   @override
   void initState() {
     super.initState();
+    cocktailOfTheDay = getCocktailOfTheDay();
     futureCocktails = getCocktailsFromStorage();
   }
 }
