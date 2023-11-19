@@ -1,11 +1,8 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:projetprogmobile/http/cocktails.dart';
 import 'package:projetprogmobile/models/cocktails.dart';
 import 'package:projetprogmobile/storage/cocktails.dart';
 import 'package:projetprogmobile/views/cocktail_list_item.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

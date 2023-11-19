@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projetprogmobile/storage/cocktails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:projetprogmobile/models/cocktails.dart';
 import 'package:projetprogmobile/views/pages/cocktail.dart';
@@ -7,7 +8,8 @@ class CocktailListItem extends StatefulWidget {
   final Cocktail cocktail;
   final bool isLiked; // Indicates if the cocktail is liked
 
-  const CocktailListItem({super.key, required this.cocktail, this.isLiked = false});
+  const CocktailListItem(
+      {super.key, required this.cocktail, this.isLiked = false});
 
   @override
   State<CocktailListItem> createState() => _CocktailListItemState();
@@ -30,24 +32,31 @@ class _CocktailListItemState extends State<CocktailListItem> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       isLiked = prefs.getString(cocktail.id) != null;
-      print(isLiked);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
+      onTap: () async {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CocktailPage(cocktail: widget.cocktail),
+            builder: (context) => CocktailPage(
+                cocktail: widget.cocktail,
+                onLikeChanged: (bool isLiked) {
+                  setState(() {
+                    this.isLiked = isLiked;
+                  });
+                }),
           ),
         );
+        await setIsLiked(); // Refresh the like status after returning
       },
       child: Card(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch, // Stretch to fill the card
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          // Stretch to fill the card
           children: <Widget>[
             Expanded(
               child: Image.network(
@@ -59,7 +68,8 @@ class _CocktailListItemState extends State<CocktailListItem> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 widget.cocktail.name,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
             IconButton(
@@ -71,15 +81,9 @@ class _CocktailListItemState extends State<CocktailListItem> {
                 setState(() {
                   isLiked = !isLiked; // Toggle the liked status
                   if (isLiked) {
-                    final prefs = SharedPreferences.getInstance();
-                    prefs.then((p) => {
-                      p.setString(cocktail.id, DateTime.now().toIso8601String())
-                    });
+                    saveLikedCocktail(cocktail.id);
                   } else {
-                    final prefs = SharedPreferences.getInstance();
-                    prefs.then((p) => {
-                      p.remove(cocktail.id)
-                    });
+                    removeLikedCocktail(cocktail.id);
                   }
                 });
               },

@@ -10,3 +10,20 @@ Future<List<Cocktail>> getCocktailsFromStorage() async {
   List<Cocktail> cocktails = decodedJson.map((elem) => Cocktail.fromJSON(elem)).toList();
   return cocktails;
 }
+
+void saveLikedCocktail(String cocktailId) {
+  SharedPreferences.getInstance().then((prefs) {
+    prefs.setString(cocktailId, DateTime.now().toIso8601String());
+  });
+}
+
+void removeLikedCocktail(String cocktailId) {
+  SharedPreferences.getInstance().then((prefs) {
+    prefs.remove(cocktailId);
+  });
+}
+
+Future<String?> getLikedCocktail(String cocktailId) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.containsKey(cocktailId) ? prefs.getString(cocktailId) : null;
+}
