@@ -23,7 +23,7 @@ void removeLikedCocktail(String cocktailId) {
   });
 }
 
-Future<String?> getLikedCocktail(String cocktailId) async {
+Future<String?> getLikedCocktailFromCache(String cocktailId) async {
   final prefs = await SharedPreferences.getInstance();
   return prefs.containsKey(cocktailId) ? prefs.getString(cocktailId) : null;
 }

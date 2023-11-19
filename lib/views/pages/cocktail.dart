@@ -23,7 +23,7 @@ class _CocktailPageState extends State<CocktailPage> {
   }
 
   void _loadIsLiked() async {
-    String? likedCocktail = await getLikedCocktail(widget.cocktail.id);
+    String? likedCocktail = await getLikedCocktailFromCache(widget.cocktail.id);
     setState(() {
       isLiked = likedCocktail != null;
     });
