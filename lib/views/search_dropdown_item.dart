@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-const List<String> list = <String>['Filter one', 'Filter two', 'Filter three', 'Four'];
+const List<String> list = <String>['Name', 'Ingredient'];
 
 class DropdownButtonSearchFilter extends StatefulWidget {
-  const DropdownButtonSearchFilter({super.key});
+  final Function(String) onFilterChanged;
+  const DropdownButtonSearchFilter({super.key, required this.onFilterChanged});
 
   @override
   State<DropdownButtonSearchFilter> createState() => _DropdownButtonSearchFilterState();
@@ -28,6 +29,7 @@ class _DropdownButtonSearchFilterState extends State<DropdownButtonSearchFilter>
         setState(() {
           dropdownValue = value!;
         });
+        widget.onFilterChanged(dropdownValue); // Pass the selected filter mode
       },
       items: list.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
