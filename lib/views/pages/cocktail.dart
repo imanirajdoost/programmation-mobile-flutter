@@ -7,7 +7,8 @@ class CocktailPage extends StatefulWidget {
   final Cocktail cocktail;
   final Function(bool) onLikeChanged; // Add this callback
 
-  const CocktailPage({super.key, required this.cocktail,required this.onLikeChanged});
+  const CocktailPage(
+      {super.key, required this.cocktail, required this.onLikeChanged});
 
   @override
   State<CocktailPage> createState() => _CocktailPageState();
@@ -20,6 +21,15 @@ class _CocktailPageState extends State<CocktailPage> {
   void initState() {
     super.initState();
     _loadIsLiked();
+
+    print('Alcoholic: ${widget.cocktail.alcoholic}');
+    print('Glass: ${widget.cocktail.glass}');
+    print('Instructions: ${widget.cocktail.instructions}');
+    print('Ingredients: ${widget.cocktail.ingredients}');
+    print('Measures: ${widget.cocktail.measures}');
+    print('Tags: ${widget.cocktail.tags}');
+    print('Category: ${widget.cocktail.category}');
+    print('IBA: ${widget.cocktail.IBA}');
   }
 
   void _loadIsLiked() async {
@@ -31,24 +41,6 @@ class _CocktailPageState extends State<CocktailPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Determine the shorter length of the two lists
-    int listLength = widget.cocktail.ingredients.length;
-    if (widget.cocktail.measures.length < listLength) {
-      listLength = widget.cocktail.measures.length;
-    }
-
-    // Function to create the shareable text content
-    String createShareContent() {
-      String ingredientsText = widget.cocktail.ingredients
-          .asMap()
-          .entries
-          .map((entry) =>
-              "${entry.value} - ${widget.cocktail.measures.length > entry.key ? widget.cocktail.measures[entry.key] : 'N/A'}")
-          .join('\n');
-
-      return "${widget.cocktail.name}\n\nIngredients:\n$ingredientsText\n\nInstructions:\n${widget.cocktail.instructions}";
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.cocktail.name),
@@ -57,65 +49,117 @@ class _CocktailPageState extends State<CocktailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Stack(
-              alignment: Alignment.bottomRight,
-              children: [
-                Image.network(widget.cocktail.thumbnailURL),
-                IconButton(
-                  icon: Icon(
-                    isLiked ? Icons.favorite : Icons.favorite_border,
-                    color: isLiked ? Colors.red : null,
+        Stack(
+        alignment: Alignment.bottomRight,
+          children: [
+            Image.network(widget.cocktail.thumbnailURL),
+            Positioned(
+              bottom: 10,
+              left: 10,
+              right: 10,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildActionButton(
+                    icon: Icons.share,
+                    color: Colors.white,
+                    onPressed: () => Share.share(createShareContent()),
+                    backgroundColor: Colors.black.withOpacity(0.5),
                   ),
-                  onPressed: () {
-                    setState(() {
-                      isLiked = !isLiked;
-                      if (isLiked) {
-                        saveLikedCocktail(widget.cocktail.id);
-                      } else {
-                        removeLikedCocktail(widget.cocktail.id);
-                      }
-                    });
-                    widget.onLikeChanged(isLiked); // Pop with the like status
-                  },
+                  _buildActionButton(
+                    icon: isLiked ? Icons.favorite : Icons.favorite_border,
+                    color: isLiked ? Colors.red : Colors.white,
+                    onPressed: () {
+                      setState(() {
+                        isLiked = !isLiked;
+                        if (isLiked) {
+                          saveLikedCocktail(widget.cocktail.id);
+                        } else {
+                          removeLikedCocktail(widget.cocktail.id);
+                        }
+                      });
+                      widget.onLikeChanged(isLiked);
+                    },
+                    backgroundColor: Colors.black.withOpacity(0.5),
+                  ),
+                  ],
                 ),
+            ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    widget.cocktail.name,
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 10),
-                  if (listLength > 0)
-                    Text(
-                      'Ingredients:',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  for (int i = 0; i < listLength; i++)
-                    Text(
-                        '${widget.cocktail.ingredients[i]} - ${widget.cocktail.measures.isNotEmpty ? widget.cocktail.measures[i] : 'N/A'}'),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Instructions:',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  Text(widget.cocktail.instructions),
-                ],
-              ),
-            ),
+            const SizedBox(height: 8),
+            _detailCard('Name', widget.cocktail.name),
+            if (widget.cocktail.alcoholic != null)
+              _detailCard('Alcoholic', widget.cocktail.alcoholic),
+            if (widget.cocktail.glass != null)
+              _detailCard('Glass', widget.cocktail.glass),
+            if (widget.cocktail.tags.isNotEmpty &&
+                widget.cocktail.tags[0] != null &&
+                widget.cocktail.tags[0] != '')
+              _detailCard('Tags', widget.cocktail.tags.join(', ')),
+            // if (widget.cocktail.IBA != null)
+            //   _detailCard('IBA', widget.cocktail.IBA!),
+            if (widget.cocktail.category != null)
+              _detailCard('Category', widget.cocktail.category),
+            _detailCard('Ingredients', _ingredientsText()),
+            _detailCard('Instructions', widget.cocktail.instructions),
+            const SizedBox(height: 8),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.share),
-        onPressed: () {
-          Share.share(createShareContent());
-        },
+    );
+  }
+
+  Widget _detailCard(String title, String content) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+      child: ListTile(
+        title: Text(title, style: Theme.of(context).textTheme.titleMedium),
+        subtitle: Text(content),
       ),
     );
   }
+
+  String _ingredientsText() {
+    int listLength = widget.cocktail.ingredients.length;
+    if (widget.cocktail.measures.length < listLength) {
+      listLength = widget.cocktail.measures.length;
+    }
+    return widget.cocktail.ingredients
+        .asMap()
+        .entries
+        .map((entry) =>
+            "${entry.value} - ${widget.cocktail.measures.length > entry.key ? widget.cocktail.measures[entry.key] : 'N/A'}")
+        .join('\n');
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onPressed,
+    Color? backgroundColor,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        icon: Icon(icon, color: color),
+        onPressed: onPressed,
+      ),
+    );
+  }
+
+  String createShareContent() {
+    String ingredientsText = widget.cocktail.ingredients
+        .asMap()
+        .entries
+        .map((entry) =>
+    "${entry.value} - ${widget.cocktail.measures.length > entry.key ? widget.cocktail.measures[entry.key] : 'N/A'}")
+        .join('\n');
+
+    return "Checkout this cocktail: ${widget.cocktail.name}\n\nImage: ${widget.cocktail.thumbnailURL}\n\nIt is made using these ingredients:\n$ingredientsText\n\nInstructions:\n${widget.cocktail.instructions}";
+  }
+
 }
