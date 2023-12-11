@@ -17,10 +17,10 @@ Future<Cocktail> getCocktailOfTheDay() async {
 
 
   // To return the cocktail of the day based on the current day, uncomment the following line
-  // return cocktails[DateTime.now().day % cocktails.length];
+  return cocktails[DateTime.now().day % cocktails.length];
 
   // Return a random cocktail from the list
-  return cocktails[DateTime.now().microsecond % cocktails.length];
+  // return cocktails[DateTime.now().microsecond % cocktails.length];
 }
 
 void saveLikedCocktail(String cocktailId) {
