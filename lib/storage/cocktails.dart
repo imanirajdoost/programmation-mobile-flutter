@@ -3,12 +3,21 @@ import 'dart:convert';
 import 'package:projetprogmobile/models/cocktails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// DLFJKHSDHKFJJKDHSFBGK DGHJS VBGKDHJSGVF HdHJKFG DHJSG FVKHJDGs 
+
 Future<List<Cocktail>> getCocktailsFromStorage() async {
   final prefs = await SharedPreferences.getInstance();
   String cocktailsString = prefs.getString('cocktails') ?? "";
   List<dynamic> decodedJson = jsonDecode(cocktailsString);
   List<Cocktail> cocktails = decodedJson.map((elem) => Cocktail.fromJSON(elem)).toList();
   return cocktails;
+}
+
+Future<List<String>> getCategotiesFromStorage() async {
+  final prefs = await SharedPreferences.getInstance();
+  String categories = prefs.getString('categories') ?? "";
+  List<String> decodedJson = jsonDecode(categories);
+  return decodedJson;
 }
 
 Future<List<String>> getAlcohols() async {
