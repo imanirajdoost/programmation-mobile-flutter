@@ -3,11 +3,11 @@ class Cocktail {
   final String id;
   final String name;
   final List<String> tags;
-  final String category;
+  final String? category;
   final String? IBA;
-  final String alcoholic;
-  final String glass;
-  final String instructions;
+  final String? alcoholic;
+  final String? glass;
+  final String? instructions;
   final String thumbnailURL;
   final List<String> ingredients;
   final List<String> measures;
@@ -31,12 +31,12 @@ class Cocktail {
       id: json['idDrink'] as String,
       name: json['strDrink'] as String,
       tags: (json['strTags'] ?? "").split(',') as List<String>,
-      category: json['strCategory'] as String,
-      IBA: json['strIBA'] as String?,
-      alcoholic: json['strAlcoholic'] as String,
-      glass: json['strGlass'] as String,
-      instructions: json['strInstructions'] as String,
-      thumbnailURL: json['strDrinkThumb'] as String,
+      category: json['strCategory'] ?? "" as String,
+      IBA: json['strIBA'] ?? "" as String,
+      alcoholic: json['strAlcoholic'] ?? "" as String,
+      glass: json['strGlass'] ?? "" as String,
+      instructions: json['strInstructions'] ?? "" as String,
+      thumbnailURL: (json['strDrinkThumb'] ?? "") as String,
       ingredients: ([
         json['strIngredient1'] ?? "",
         json['strIngredient2'] ?? "",

@@ -71,7 +71,7 @@ class _CocktailFavoriteListItemState extends State<CocktailFavoriteListItem> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          widget.cocktail.instructions, // Assuming there's a description field
+                          widget.cocktail.instructions ?? "", // Assuming there's a description field
                           style: const TextStyle(
                             fontSize: 14, // Smaller font size for the description
                           ),

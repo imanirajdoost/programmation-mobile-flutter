@@ -84,7 +84,7 @@ class _CocktailOfTheDayItemState extends State<CocktailOfTheDayItem> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      widget.cocktail.instructions,
+                      widget.cocktail.instructions ?? "",
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.white70,

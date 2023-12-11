@@ -90,9 +90,9 @@ class _CocktailPageState extends State<CocktailPage> {
             const SizedBox(height: 8),
             _detailCard('Name', widget.cocktail.name),
             if (widget.cocktail.alcoholic != null)
-              _detailCard('Alcoholic', widget.cocktail.alcoholic),
+              _detailCard('Alcoholic', widget.cocktail.alcoholic ?? ""),
             if (widget.cocktail.glass != null)
-              _detailCard('Glass', widget.cocktail.glass),
+              _detailCard('Glass', widget.cocktail.glass ?? ""),
             if (widget.cocktail.tags.isNotEmpty &&
                 widget.cocktail.tags[0] != null &&
                 widget.cocktail.tags[0] != '')
@@ -100,9 +100,9 @@ class _CocktailPageState extends State<CocktailPage> {
             // if (widget.cocktail.IBA != null)
             //   _detailCard('IBA', widget.cocktail.IBA!),
             if (widget.cocktail.category != null)
-              _detailCard('Category', widget.cocktail.category),
+              _detailCard('Category', widget.cocktail.category ?? ""),
             _detailCard('Ingredients', _ingredientsText()),
-            _detailCard('Instructions', widget.cocktail.instructions),
+            _detailCard('Instructions', widget.cocktail.instructions ?? ""),
             const SizedBox(height: 8),
           ],
         ),
