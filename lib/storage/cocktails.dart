@@ -11,6 +11,21 @@ Future<List<Cocktail>> getCocktailsFromStorage() async {
   return cocktails;
 }
 
+Future<List<String>> getAlcohols() async {
+
+  List<String> alcohols = [];
+
+  final List<Cocktail> cocktails = await getCocktailsFromStorage();
+
+  cocktails.forEach((cocktail) => {
+    if (alcohols.contains(cocktail.alcoholic) && cocktail.alcoholic == "Alcoholic") {
+      alcohols.add(cocktail.ingredients[0])
+    }
+  });
+
+  return alcohols;
+}
+
 Future<Cocktail> getCocktailOfTheDay() async {
   // Get the list of cocktails from the shared preferences
   final List<Cocktail> cocktails = await getCocktailsFromStorage();
