@@ -16,6 +16,22 @@ class _HomePageState extends State<HomePage> {
 
   late Future<Cocktail> cocktailOfTheDay;
 
+  String sortType = 'Alphabet'; // Default sort type
+  String selectedAlcohol = 'All'; // Selected alcohol for sorting
+  String selectedCategory = 'All'; // Selected category for sorting
+
+  void sortCocktails(List<Cocktail> cocktails) {
+    if (sortType == 'Alphabet') {
+      cocktails.sort((a, b) => a.name.compareTo(b.name));
+    } else if (sortType == 'Alcohol type') {
+      // Filter by selected alcohol type, then sort alphabetically
+      cocktails.sort((a, b) => a.alcoholic.toString().compareTo(b.alcoholic.toString()));
+    } else if (sortType == 'Cocktail category') {
+      // Filter by selected category, then sort alphabetically
+      cocktails.sort((a, b) => a.category.toString().compareTo(b.category.toString()));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,6 +56,9 @@ class _HomePageState extends State<HomePage> {
                 return Text('Error: ${gridSnapshot.error}');
               }
 
+              var cocktails = gridSnapshot.data ?? [];
+              // Apply sorting here based on sortType
+
               return CustomScrollView(
                 slivers: <Widget>[
                   SliverToBoxAdapter(
@@ -57,8 +76,7 @@ class _HomePageState extends State<HomePage> {
                           height: 150,
                           child: Center(
                             child: cocktailSnapshot.hasData
-                                ? CocktailOfTheDayItem(
-                                    cocktail: cocktailSnapshot.data!)
+                                ? CocktailOfTheDayItem(cocktail: cocktailSnapshot.data!)
                                 : const Text('No Cocktail of the Day'),
                           ),
                         ),
@@ -67,26 +85,69 @@ class _HomePageState extends State<HomePage> {
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        "All Cocktails",
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "All Cocktails",
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.sort_by_alpha),
+                                    onPressed: () {
+                                      setState(() {
+                                        // Sort by alphabet logic
+                                        sortType = 'Alphabet';
+                                      });
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.local_bar),
+                                    onPressed: () {
+                                      setState(() {
+                                        // Sort by Alcohol type logic
+                                        sortType = 'Alcohol Type';
+                                      });
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.category),
+                                    onPressed: () {
+                                      setState(() {
+                                        // Sort by Cocktail category logic
+                                        sortType = 'Category';
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        Text(
+                          'Sorted by: $sortType',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ],
+                    ),
                     ),
                   ),
                   SliverGrid(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                     ),
                     delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
+                          (BuildContext context, int index) {
                         return Center(
-                          child: CocktailListItem(
-                              cocktail: gridSnapshot.data![index]),
+                          child: CocktailListItem(cocktail: cocktails[index]),
                         );
                       },
-                      childCount: gridSnapshot.data!.length,
+                      childCount: cocktails.length,
                     ),
                   ),
                 ],
@@ -97,6 +158,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
 
   @override
   void initState() {
