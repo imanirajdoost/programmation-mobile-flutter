@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:projetprogmobile/models/cocktails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// DLFJKHSDHKFJJKDHSFBGK DGHJS VBGKDHJSGVF HdHJKFG DHJSG FVKHJDGs 
-
 Future<List<Cocktail>> getCocktailsFromStorage() async {
   final prefs = await SharedPreferences.getInstance();
   String cocktailsString = prefs.getString('cocktails') ?? "";
@@ -13,11 +11,12 @@ Future<List<Cocktail>> getCocktailsFromStorage() async {
   return cocktails;
 }
 
-Future<List<String>> getCategotiesFromStorage() async {
+Future<List<String>> getCategoriesFromStorage() async {
   final prefs = await SharedPreferences.getInstance();
-  String categories = prefs.getString('categories') ?? "";
-  List<String> decodedJson = jsonDecode(categories);
-  return decodedJson;
+  String categories = prefs.getString('categories') ?? "[]";
+  List<dynamic> decodedJson = jsonDecode(categories);
+  List<String> categoriesList = decodedJson.map((elem) => elem.toString()).toList();
+  return categoriesList;
 }
 
 Future<List<String>> getAlcohols() async {
@@ -27,8 +26,8 @@ Future<List<String>> getAlcohols() async {
   final List<Cocktail> cocktails = await getCocktailsFromStorage();
 
   cocktails.forEach((cocktail) => {
-    if (alcohols.contains(cocktail.alcoholic) && cocktail.alcoholic == "Alcoholic") {
-      alcohols.add(cocktail.ingredients[0])
+    if (!alcohols.contains(cocktail.alcoholic)) {
+      alcohols.add(cocktail.alcoholic.toString())
     }
   });
 
