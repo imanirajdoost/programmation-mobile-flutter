@@ -7,9 +7,10 @@ import 'package:projetprogmobile/views/pages/cocktail.dart';
 class CocktailListItem extends StatefulWidget {
   final Cocktail cocktail;
   final bool isLiked; // Indicates if the cocktail is liked
+  final String additionalInfo;
 
   const CocktailListItem(
-      {super.key, required this.cocktail, this.isLiked = false});
+      {super.key, required this.cocktail, required this.additionalInfo, this.isLiked = false, });
 
   @override
   State<CocktailListItem> createState() => _CocktailListItemState();
@@ -18,14 +19,22 @@ class CocktailListItem extends StatefulWidget {
 class _CocktailListItemState extends State<CocktailListItem> {
   late Cocktail cocktail;
   late bool isLiked = false; // Indicates if the cocktail is liked
+  late String additionalInfo = '';
 
   @override
   void initState() {
     super.initState();
     cocktail = widget.cocktail; // Initialize name here
     isLiked = widget.isLiked; // Initialize isLiked here
+    additionalInfo = widget.additionalInfo; // Initialize additionalInfo here
 
     setIsLiked();
+    setAdditionalInfo();
+  }
+
+  void setAdditionalInfo()
+  {
+
   }
 
   Future<void> setIsLiked() async {
@@ -88,6 +97,18 @@ class _CocktailListItemState extends State<CocktailListItem> {
                 });
               },
             ),
+            // if additionalInfo is not empty, display it
+            if (additionalInfo.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  additionalInfo,
+                  style: const TextStyle(fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.amber,
+                  ),
+                ),
+              ),
           ],
         ),
       ),

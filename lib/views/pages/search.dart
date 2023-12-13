@@ -15,13 +15,49 @@ class _SearchPageState extends State<SearchPage> {
 
   late Future<List<Cocktail>> futureCocktails;
   String searchQuery = '';
+  List<Cocktail> filteredCocktails = [];
   final TextEditingController searchController = TextEditingController();
 
   String filterMode = 'Name'; // Variable to store the current filter mod
 
+  String nearestIngredient = '';
+
+  ValueNotifier<String> nearestIngredientNotifier = ValueNotifier('');
+
+  void updateNearestIngredient(List<Cocktail> cocktails, String query) {
+
+    if(filterMode == 'Name') {
+      nearestIngredient = '';
+      nearestIngredientNotifier.value = nearestIngredient;
+      return;
+    }
+
+    if(query.isEmpty) {
+      nearestIngredient = '';
+      nearestIngredientNotifier.value = nearestIngredient;
+      return;
+    }
+
+
+    for (var cocktail in cocktails) {
+      for (var ingredient in cocktail.ingredients) {
+        // Check for partial match first
+        if (ingredient.toLowerCase().contains(query.toLowerCase())) {
+          nearestIngredient = ingredient;
+          break;
+        }
+      }
+    }
+
+    // Logic to find the nearest ingredient
+    // Once found, update the nearestIngredientNotifier
+    nearestIngredientNotifier.value = nearestIngredient;
+  }
+
   void setFilterMode(String mode) {
     setState(() {
       filterMode = mode;
+      updateNearestIngredient(filteredCocktails, searchQuery);
     });
   }
 
@@ -31,17 +67,26 @@ class _SearchPageState extends State<SearchPage> {
     futureCocktails = getCocktailsFromStorage();
   }
 
-  List<Cocktail> filterCocktails(List<Cocktail> cocktails, String query) {
+  void filterCocktails(List<Cocktail> cocktails, String query) {
     if (query.isEmpty) {
-      return cocktails;
+      filteredCocktails = cocktails;
     } else {
       if (filterMode == 'Name') {
-        return cocktails.where((cocktail) => cocktail.name.toLowerCase().contains(query.toLowerCase())).toList();
+        filteredCocktails = cocktails.where((cocktail) => cocktail.name.toLowerCase().contains(query.toLowerCase())).toList();
       } else { // 'Ingredient' filter mode
-        return cocktails.where((cocktail) =>
+        filteredCocktails = cocktails.where((cocktail) =>
             cocktail.ingredients.any((ingredient) => ingredient.toLowerCase().contains(query.toLowerCase()))
         ).toList();
       }
+    }
+  }
+
+  String getAdditionalInfo(Cocktail cocktail) {
+    if (filterMode == 'Name') {
+      return '';
+    } else { // 'Ingredient' filter mode
+      // return cocktail.ingredients.join(', ');
+      return nearestIngredient;
     }
   }
 
@@ -59,6 +104,7 @@ class _SearchPageState extends State<SearchPage> {
           onPressed: () {
             setState(() {
               searchQuery = '';
+              updateNearestIngredient(filteredCocktails, searchQuery);
               searchController.clear();  // Clear the text in the controller
             });
           },
@@ -71,6 +117,7 @@ class _SearchPageState extends State<SearchPage> {
       onChanged: (value) {
         setState(() {
           searchQuery = value;
+          updateNearestIngredient(filteredCocktails, searchQuery); // Call to update immediately
         });
       },
     );
@@ -82,6 +129,9 @@ class _SearchPageState extends State<SearchPage> {
         Expanded(child: searchField),
       ],
     );
+
+    // Add a key to FutureBuilder
+    final futureBuilderKey = ValueKey(searchQuery);
 
     return Scaffold(
       appBar: AppBar(
@@ -98,6 +148,8 @@ class _SearchPageState extends State<SearchPage> {
               const SizedBox(width: 30),
               Expanded(child:DropdownButtonSearchFilter(
                 onFilterChanged: (mode) {
+                  searchQuery = '';
+                  searchController.clear();
                   setFilterMode(mode);
                 },
               ),
@@ -106,6 +158,7 @@ class _SearchPageState extends State<SearchPage> {
             const SizedBox(height: 10),
             Expanded(
               child: FutureBuilder<List<Cocktail>>(
+                key: futureBuilderKey,
             future: futureCocktails,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -113,7 +166,6 @@ class _SearchPageState extends State<SearchPage> {
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else if (snapshot.hasData) {
-                  List<Cocktail> filteredCocktails =
                   filterCocktails(snapshot.data!, searchQuery);
 
                   if (filteredCocktails.isEmpty) {
@@ -123,14 +175,20 @@ class _SearchPageState extends State<SearchPage> {
                     );
                   }
 
-                  return GridView.count(
-                    crossAxisCount: 2,
-                    children: filteredCocktails.map((cocktail) {
-                      return Center(
-                        child: CocktailListItem(cocktail: cocktail),
-                      );
-                    }).toList(),
-                  );
+                  return ValueListenableBuilder<String>(
+                      valueListenable: nearestIngredientNotifier,
+                  builder: (context, value, child) {
+                    return GridView.count(
+                      crossAxisCount: 2,
+                      children: filteredCocktails.map((cocktail) {
+                        return Center(
+                          child: CocktailListItem(
+                              additionalInfo: getAdditionalInfo(cocktail),
+                              cocktail: cocktail),
+                        );
+                      }).toList(),
+                    );
+                  });
                 } else {
                   return const Text('No cocktails found');
                 }

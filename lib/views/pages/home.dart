@@ -16,8 +16,10 @@ class _HomePageState extends State<HomePage> {
 
   late Future<Cocktail> cocktailOfTheDay;
 
-  String _selectedSort = 'Category';
+  String _selectedSort = 'Alphabet';
   Map<String, List<Cocktail>> _sortedCache = {}; // Cache for sorted lists
+
+  String _titleText = 'All Cocktails';
 
   Future<List<Cocktail>> sortAndGroupCocktails(List<Cocktail> cocktails, String sortBy) async {
     // Check cache first
@@ -30,7 +32,12 @@ class _HomePageState extends State<HomePage> {
     final cats = await getCategoriesFromStorage();
     final alcs = await getAlcohols();
 
-    if (sortBy == 'Category') {
+    if (sortBy == 'Alphabet') {
+      // No grouping, just sort by name
+      cocktails.sort((a, b) => a.name.compareTo(b.name));
+      return cocktails;
+    }
+    else if (sortBy == 'Category') {
       // Group by categories
       for (var category in cats) {
         groupedCocktails[category] = cocktails.where((c) => c.category == category).toList();
@@ -45,7 +52,7 @@ class _HomePageState extends State<HomePage> {
     // Flatten the grouped cocktails into a single list for display
     List<Cocktail> sortedAndGroupedCocktails = [];
     groupedCocktails.forEach((key, value) {
-      // You might want to add a header or separator for each group
+      // Add a header or separator for each group
       // For now, just adding the cocktails
       sortedAndGroupedCocktails.addAll(value);
     });
@@ -56,6 +63,32 @@ class _HomePageState extends State<HomePage> {
     return sortedAndGroupedCocktails;
   }
 
+  String getTitleText()
+  {
+    if (_selectedSort == 'Alphabet') {
+      return 'All Cocktails';
+    } else if (_selectedSort == 'Category') {
+      return 'Cocktails by Category';
+    } else if (_selectedSort == 'Alcohol type') {
+      return 'Cocktails by Alcohol Type';
+    } else {
+      return 'All Cocktails';
+    }
+  }
+
+  String getAdditionalInfo(Cocktail cocktail)
+  {
+    if (_selectedSort == 'Alphabet') {
+      return '';
+    } else if (_selectedSort == 'Category') {
+      return cocktail.category.toString();
+    } else if (_selectedSort == 'Alcohol type') {
+      return cocktail.alcoholic.toString();
+    } else {
+      return '';
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,19 +96,23 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Home'),
         actions: <Widget>[
+          const Text("Sort by: "),
+          // Add some space
+          const SizedBox(width: 10),
           DropdownButton<String>(
             value: _selectedSort,
             onChanged: (String? newValue) {
               if (newValue != null && newValue != _selectedSort) {
                 setState(() {
                   _selectedSort = newValue;
+                  _titleText = getTitleText();
                   futureCocktails = getCocktailsFromStorage().then((cocktails) {
                     return sortAndGroupCocktails(cocktails, _selectedSort);
                   });
                 });
               }
             },
-            items: <String>['Category', 'Alcohol type']
+            items: <String>['Alphabet', 'Category', 'Alcohol type']
                 .map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
@@ -132,7 +169,7 @@ class _HomePageState extends State<HomePage> {
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
-                        "All Cocktails",
+                        _titleText,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),
@@ -146,7 +183,8 @@ class _HomePageState extends State<HomePage> {
                           (BuildContext context, int index) {
                         return Center(
                           child: CocktailListItem(
-                              cocktail: gridSnapshot.data![index]),
+                              cocktail: gridSnapshot.data![index],
+                          additionalInfo: getAdditionalInfo(gridSnapshot.data![index])),
                         );
                       },
                       childCount: gridSnapshot.data!.length,
