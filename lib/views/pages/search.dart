@@ -180,6 +180,7 @@ class _SearchPageState extends State<SearchPage> {
                   builder: (context, value, child) {
                     return GridView.count(
                       crossAxisCount: 2,
+                      mainAxisSpacing: 10,
                       children: filteredCocktails.map((cocktail) {
                         return Center(
                           child: CocktailListItem(

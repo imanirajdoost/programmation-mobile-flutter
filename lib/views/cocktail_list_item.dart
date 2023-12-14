@@ -29,12 +29,6 @@ class _CocktailListItemState extends State<CocktailListItem> {
     additionalInfo = widget.additionalInfo; // Initialize additionalInfo here
 
     setIsLiked();
-    setAdditionalInfo();
-  }
-
-  void setAdditionalInfo()
-  {
-
   }
 
   Future<void> setIsLiked() async {
@@ -65,12 +59,12 @@ class _CocktailListItemState extends State<CocktailListItem> {
       child: Card(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          // Stretch to fill the card
           children: <Widget>[
             Expanded(
+              // Use Expanded to allow the image to take up available space
               child: Image.network(
                 widget.cocktail.thumbnailURL,
-                fit: BoxFit.cover, // Cover the card area
+                fit: BoxFit.cover,
               ),
             ),
             Padding(
@@ -79,10 +73,25 @@ class _CocktailListItemState extends State<CocktailListItem> {
                 widget.cocktail.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold), // Adjusted font size
               ),
             ),
+            if (additionalInfo.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                child: Text(
+                  additionalInfo,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 14, // Adjusted font size
+                    fontWeight: FontWeight.bold,
+                    color: Colors.amber,
+                  ),
+                ),
+              ),
             IconButton(
               icon: Icon(
                 isLiked ? Icons.favorite : Icons.favorite_border,
@@ -99,21 +108,11 @@ class _CocktailListItemState extends State<CocktailListItem> {
                 });
               },
             ),
-            // if additionalInfo is not empty, display it
-            if (additionalInfo.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  additionalInfo,
-                  style: const TextStyle(fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.amber,
-                  ),
-                ),
-              ),
           ],
         ),
       ),
     );
   }
+
+
 }
