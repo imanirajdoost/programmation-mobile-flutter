@@ -77,6 +77,8 @@ class _CocktailListItemState extends State<CocktailListItem> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 widget.cocktail.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
