@@ -32,59 +32,60 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<Cocktail>> sortAndGroupCocktails(
       List<Cocktail> cocktails, String sortBy, String filterBy) async {
+
+    // Create a combined key for the cache
+    String cacheKey = '$sortBy-$filterBy';
+
     // Check cache first
-    if (_sortedCache.containsKey(sortBy)) {
-      return _sortedCache[sortBy]!;
+    if (_sortedCache.containsKey(cacheKey)) {
+      return _sortedCache[cacheKey]!;
     }
 
-    Map<String, List<Cocktail>> groupedCocktails = {};
+    // Fetch categories and alcohols only if they are not already fetched
+    if (categories.isEmpty) {
+      categories = await getCategoriesFromStorage();
+    }
+    if (alcohols.isEmpty) {
+      alcohols = await getAlcohols();
+    }
 
-    categories = await getCategoriesFromStorage();
-    alcohols = await getAlcohols();
-
-    if (filterBy.isNotEmpty &&
-        filterBy != 'All Categories' &&
-        filterBy != 'All Types') {
+    // Filter cocktails based on the filterBy criteria
+    if (filterBy.isNotEmpty && filterBy != 'All Categories' && filterBy != 'All Types') {
       if (sortBy == 'Category') {
         cocktails = cocktails.where((c) => c.category == filterBy).toList();
       } else if (sortBy == 'Alcohol type') {
-        cocktails =
-            cocktails.where((c) => c.alcoholic.toString() == filterBy).toList();
+        cocktails = cocktails.where((c) => c.alcoholic.toString() == filterBy).toList();
       }
     }
 
+    // Sort and group cocktails based on the sortBy criteria
     if (sortBy == 'Alphabet') {
-      // No grouping, just sort by name
       cocktails.sort((a, b) => a.name.compareTo(b.name));
-      return cocktails;
-    } else if (sortBy == 'Category') {
-      // Group by categories
-      for (var category in categories) {
-        groupedCocktails[category] =
-            cocktails.where((c) => c.category == category).toList();
+    } else {
+      Map<String, List<Cocktail>> groupedCocktails = {};
+      if (sortBy == 'Category') {
+        for (var category in categories) {
+          groupedCocktails[category] = cocktails.where((c) => c.category == category).toList();
+        }
+      } else if (sortBy == 'Alcohol type') {
+        for (var alcoholType in alcohols) {
+          groupedCocktails[alcoholType] = cocktails.where((c) => c.alcoholic.toString() == alcoholType).toList();
+        }
       }
-    } else if (sortBy == 'Alcohol type') {
-      // Group by alcohol types
-      for (var alcoholType in alcohols) {
-        groupedCocktails[alcoholType] = cocktails
-            .where((c) => c.alcoholic.toString() == alcoholType)
-            .toList();
-      }
+
+      // Flatten the grouped cocktails into a single list for display
+      cocktails = [];
+      groupedCocktails.forEach((key, value) {
+        cocktails.addAll(value);
+      });
     }
 
-    // Flatten the grouped cocktails into a single list for display
-    List<Cocktail> sortedAndGroupedCocktails = [];
-    groupedCocktails.forEach((key, value) {
-      // Add a header or separator for each group
-      // For now, just adding the cocktails
-      sortedAndGroupedCocktails.addAll(value);
-    });
+    // Store the sorted and filtered list in the cache
+    _sortedCache[cacheKey] = cocktails;
 
-    // Store the sorted and grouped list in the cache
-    _sortedCache[sortBy] = sortedAndGroupedCocktails;
-
-    return sortedAndGroupedCocktails;
+    return cocktails;
   }
+
 
   void updateFilterOptions() {
     if (_selectedSort == 'Category') {
