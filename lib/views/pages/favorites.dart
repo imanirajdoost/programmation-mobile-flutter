@@ -52,10 +52,9 @@ class _FavoritePageState extends State<FavoritePage> {
             return Text('Error: ${snapshot.error}');
           } else if (snapshot.hasData && snapshot.data!.isEmpty) {
             // If the list is empty, show a "List is empty" message
-            return const Expanded(
-                child: Center(
+            return const Center(
                     child: Text(
-                        'The list is empty. Add cocktails from the home page!')));
+                        'The list is empty. Add cocktails from the home page!'));
           } else if (snapshot.hasData) {
             // If there's data, show the list
             return ListView.builder(
@@ -73,7 +72,10 @@ class _FavoritePageState extends State<FavoritePage> {
             );
           } else {
             // If none of the above, show a generic message
-            return const Text('No data available');
+            return const Center(
+                    child: Text(
+                        'The list is empty. Add cocktails from the home page!')
+            );
           }
         },
       ),
